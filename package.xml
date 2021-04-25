@@ -2,7 +2,7 @@
 <package format="2">
   <name>first_project</name>
   <version>0.0.0</version>
-  <description>The robotics_first package</description>
+  <description>The first_project package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

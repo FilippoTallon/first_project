@@ -12,13 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
-  nav_msgs
   std_msgs
+  nav_msgs
   message_filters
   geometry_msgs
-  tf2
-  tf2_ros
-  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -99,11 +96,11 @@ generate_messages(
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-generate_dynamic_reconfigure_options(
-  cfg/parameter.cfg
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-)
+# generate_dynamic_reconfigure_options(
+#   cfg/parameter.cfg
+# #   cfg/DynReconf1.cfg
+# #   cfg/DynReconf2.cfg
+# )
 
 ###################################
 ## catkin specific configuration ##
@@ -122,8 +119,8 @@ catkin_package(
   roscpp
   rospy
   std_msgs
-  message_runtime
   nav_msgs
+  message_runtime
   message_filters
   geometry_msgs
 #  DEPENDS system_lib
@@ -142,7 +139,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/robotics_first.cpp
+#   src/${PROJECT_NAME}/first_project.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -228,21 +225,20 @@ include_directories(
 # add_executable(publisher src/pub.cpp)
 # target_link_libraries(publisher ${catkin_LIBRARIES})
 
-add_executable(twist src/twist.cpp)
-add_dependencies(twist robotics_first_generate_messages_cpp)
-target_link_libraries(twist ${catkin_LIBRARIES})
+add_executable(scout_velocity src/scout_velocity.cpp)
+add_dependencies(scout_velocity first_project_generate_messages_cpp)
+target_link_libraries(scout_velocity ${catkin_LIBRARIES})
 
-add_executable(baseline_calculator src/baseline_calculator.cpp)
-add_dependencies(baseline_calculator robotics_first_generate_messages_cpp)
-target_link_libraries(baseline_calculator ${catkin_LIBRARIES})
+# add_executable(baseline_calculator src/baseline_calculator.cpp)
+# add_dependencies(baseline_calculator robotics_first_generate_messages_cpp)
+# target_link_libraries(baseline_calculator ${catkin_LIBRARIES})
 
 add_executable(odometry src/odometry.cpp)
-add_dependencies(odometry robotics_first_generate_messages_cpp)
-add_dependencies(odometry ${PROJECT_NAME}_gencfg)
+add_dependencies(odometry first_project_generate_messages_cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 
-add_executable(agile_tf src/agile_tf.cpp)
-target_link_libraries(agile_tf ${catkin_LIBRARIES})
+# add_executable(agile_tf src/agile_tf.cpp)
+# target_link_libraries(agile_tf ${catkin_LIBRARIES})
 
-add_executable(local_tf src/local_tf.cpp)
-target_link_libraries(local_tf ${catkin_LIBRARIES})
+# add_executable(local_tf src/local_tf.cpp)
+# target_link_libraries(local_tf ${catkin_LIBRARIES})
