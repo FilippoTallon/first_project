@@ -1,12 +1,18 @@
 <launch>
 
+<<<<<<< HEAD
     <param name="x0" value="0" type="double"/>
     <param name="y0" value="0" type="double"/>
     <param name="theta0" value="-0.534" type="double"/>
+=======
+    <param name="x0" value="0.0" type="double"/>
+    <param name="y0" value="0.0" type="double"/>
+    <param name="theta0" value="0.0" type="double"/>
+>>>>>>> 08ef8be4d3c9d5bb0ead3b9b4b54b233ff6e3ae1
 
     <node pkg="first_project" name="scout_velocity" type="scout_velocity" output="screen"/>
     <node pkg="first_project" name="odometry" type="odometry" output="screen"/>
 
-    <node pkg="rosbag" type="play" name="player" output="screen" args="--clock $(find first_project)/bag1.bag"/>
+    <node pkg="rqt_reconfigure" name="reconfigure_gui" type="rqt_reconfigure" />
 
 </launch>

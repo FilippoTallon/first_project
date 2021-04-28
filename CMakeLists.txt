@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   tf2
   tf2_ros
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,8 +58,6 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   MotorSpeed.msg
-#   Message1.msg
-#   Message2.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -98,11 +97,9 @@ generate_messages(
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/parameter.cfg
-# #   cfg/DynReconf1.cfg
-# #   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/methods.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -115,7 +112,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES robotics_first
+#  LIBRARIES first_project
 #  CATKIN_DEPENDS other_catkin_pkg
   CATKIN_DEPENDS
   roscpp
@@ -237,6 +234,7 @@ target_link_libraries(scout_velocity ${catkin_LIBRARIES})
 
 add_executable(odometry src/odometry.cpp)
 add_dependencies(odometry first_project_generate_messages_cpp)
+add_dependencies(odometry ${PROJECT_NAME}_gencfg)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 
 add_executable(pub_tf2 src/pub_tf2.cpp)
