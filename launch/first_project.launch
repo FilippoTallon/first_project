@@ -1,7 +1,7 @@
 <launch>
 
-    <param name="x0" value="-0.832" type="double"/>
-    <param name="y0" value="0.426" type="double"/>
+    <param name="x0" value="0" type="double"/>
+    <param name="y0" value="0" type="double"/>
     <param name="theta0" value="-0.534" type="double"/>
 
     <node pkg="first_project" name="scout_velocity" type="scout_velocity" output="screen"/>
