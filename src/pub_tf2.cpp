@@ -19,12 +19,16 @@ public:
     transformStamped.transform.translation.x = msg->pose.pose.position.x;
     transformStamped.transform.translation.y = msg->pose.pose.position.y;
     transformStamped.transform.translation.z = msg->pose.pose.position.z;
-    tf2::Quaternion q;
+    /*tf2::Quaternion q;
     q.setRPY(0, 0, msg->pose.pose.orientation.z);
     transformStamped.transform.rotation.x = q.x();
     transformStamped.transform.rotation.y = q.y();
     transformStamped.transform.rotation.z = q.z();
-    transformStamped.transform.rotation.w = q.w();
+    transformStamped.transform.rotation.w = q.w();*/
+    transformStamped.transform.rotation.x = msg->pose.pose.orientation.x;
+    transformStamped.transform.rotation.y = msg->pose.pose.orientation.y;
+    transformStamped.transform.rotation.z = msg->pose.pose.orientation.z;
+    transformStamped.transform.rotation.w = msg->pose.pose.orientation.w;
     br.sendTransform(transformStamped);
   }
 
