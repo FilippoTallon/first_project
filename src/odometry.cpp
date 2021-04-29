@@ -61,7 +61,7 @@ class Odometry
         ROS_INFO("KUTTA");
       }
       
-      odo_msg.child_frame_id = "base_link";
+      odo_msg.child_frame_id = "agilex";  /*base link*/
       odo_msg.header.frame_id = "odom";
       odo_msg.header.stamp = ros::Time::now();
       odo_msg.pose.pose.position.x = x_k1;
