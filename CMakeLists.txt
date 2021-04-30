@@ -240,6 +240,9 @@ target_link_libraries(odometry ${catkin_LIBRARIES})
 add_executable(pub_tf2 src/pub_tf2.cpp)
 target_link_libraries(pub_tf2 ${catkin_LIBRARIES})
 
+add_executable(agilex_tf2 src/agilex_tf2.cpp)
+target_link_libraries(agilex_tf2 ${catkin_LIBRARIES})
+
 # add_executable(agile_tf src/agile_tf.cpp)
 # target_link_libraries(agile_tf ${catkin_LIBRARIES})
 
