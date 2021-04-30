@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   dynamic_reconfigure
+  std_srvs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -61,11 +62,10 @@ add_message_files(
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ResetOdometryToPose.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -76,10 +76,10 @@ add_message_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-#   DEPENDENCIES
   DEPENDENCIES
   std_msgs
   nav_msgs
+  std_srvs
 )
 
 ################################################
@@ -122,6 +122,7 @@ catkin_package(
   message_runtime
   message_filters
   geometry_msgs
+  std_srvs
 #  DEPENDS system_lib
 )
 
@@ -228,10 +229,6 @@ add_executable(scout_velocity src/scout_velocity.cpp)
 add_dependencies(scout_velocity first_project_generate_messages_cpp)
 target_link_libraries(scout_velocity ${catkin_LIBRARIES})
 
-# add_executable(baseline_calculator src/baseline_calculator.cpp)
-# add_dependencies(baseline_calculator robotics_first_generate_messages_cpp)
-# target_link_libraries(baseline_calculator ${catkin_LIBRARIES})
-
 add_executable(odometry src/odometry.cpp)
 add_dependencies(odometry first_project_generate_messages_cpp)
 add_dependencies(odometry ${PROJECT_NAME}_gencfg)
@@ -239,9 +236,3 @@ target_link_libraries(odometry ${catkin_LIBRARIES})
 
 add_executable(pub_tf2 src/pub_tf2.cpp)
 target_link_libraries(pub_tf2 ${catkin_LIBRARIES})
-
-# add_executable(agile_tf src/agile_tf.cpp)
-# target_link_libraries(agile_tf ${catkin_LIBRARIES})
-
-# add_executable(local_tf src/local_tf.cpp)
-# target_link_libraries(local_tf ${catkin_LIBRARIES})

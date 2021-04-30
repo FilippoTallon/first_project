@@ -4,9 +4,10 @@
 #include <nav_msgs/Odometry.h>
 #include <math.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
 #include <dynamic_reconfigure/server.h>
 #include <first_project/methodsConfig.h>
+#include <std_srvs/Empty.h>
+#include <first_project/ResetOdometryToPose.h>
 
 class Odometry
 {
@@ -20,9 +21,11 @@ class Odometry
       if (! n.getParam("theta0", y_k)) 
         ROS_INFO("Error retrieving paramater theta.");
 
-      sub = n.subscribe("/scout_velocity", 1000, &Odometry::callback, this);
+      sub = n.subscribe("/scout_velocity", 1000, &Odometry::callback, this);    // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
 
-      odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);
+      odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);         // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
+      srvResetOdometry = n.advertiseService("reset_odometry", &Odometry::resetOdometry, this);
+      srvResetOdometryToPose = n.advertiseService("reset_odometry_to_pose", &Odometry::resetOdometryToPose, this);
     }
     
 
@@ -33,7 +36,7 @@ class Odometry
       y_k1 = y_k + v*time*sin(theta_k);
     }
 
-    void kutta(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
+    void rungeKutta(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
     {
       theta_k1 = theta_k + omega*time;
       x_k1 = x_k + v*time*cos(theta_k + omega*time/2);
@@ -50,16 +53,7 @@ class Odometry
       if (! n.getParam("odometry/method", integrationMethod))
         ROS_INFO("Error retrieving the integration method.");
 
-      if (integrationMethod == 0) 
-      {
-        euler(msg, v, omega, delta_time);
-        ROS_INFO("EULER");
-      }
-      else
-      {
-        kutta(msg, v, omega, delta_time);
-        ROS_INFO("KUTTA");
-      }
+      integrationMethod == 0 ? euler(msg, v, omega, delta_time) : rungeKutta(msg, v, omega, delta_time);
       
       odo_msg.child_frame_id = "agilex";  /*base link*/
       odo_msg.header.frame_id = "odom";
@@ -81,10 +75,32 @@ class Odometry
       prv_time = time;
     }
 
+    bool resetOdometry(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+    {
+      x_k = 0.0;
+      y_k = 0.0;
+      theta_k = 0.0;
+
+      ROS_INFO("reset odometry to (0.0, 0.0, 0.0)");
+      return true;
+    }
+
+    bool resetOdometryToPose(first_project::ResetOdometryToPose::Request& req, first_project::ResetOdometryToPose::Response& res)
+    {
+      x_k = req.x;
+      y_k = req.y;
+      theta_k = req.theta;
+
+      ROS_INFO("reset odometry to (%f, %f , %f)", x_k, y_k, theta_k);
+      return true;
+    }
+
     private:
     ros::NodeHandle n;
     ros::Publisher odometry;
     ros::Subscriber sub;
+    ros::ServiceServer srvResetOdometry;
+    ros::ServiceServer srvResetOdometryToPose;
     nav_msgs::Odometry odo_msg; 
     tf2::Quaternion q;
     double x_k;
