@@ -18,7 +18,7 @@ class Odometry
         ROS_INFO("Error retrieving paramater x.");            
       if (! n.getParam("y0", y_k)) 
         ROS_INFO("Error retrieving paramater y.");            
-      if (! n.getParam("theta0", y_k)) 
+      if (! n.getParam("theta0", theta_k)) 
         ROS_INFO("Error retrieving paramater theta.");
 
       sub = n.subscribe("/scout_velocity", 1000, &Odometry::callback, this);    // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
@@ -124,7 +124,7 @@ class Odometry
 
 void callback(first_project::methodsConfig &config, uint32_t level) 
 {
-  ROS_INFO("Reconfigure Request: %d", config.method);
+  //ROS_INFO("Reconfigure Request: %d", config.method);
   ROS_INFO(config.method == 0? "Euler":"Runge-Kutta");
 }
 

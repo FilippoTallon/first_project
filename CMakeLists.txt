@@ -237,3 +237,7 @@ target_link_libraries(odometry ${catkin_LIBRARIES})
 
 add_executable(pub_tf2 src/pub_tf2.cpp)
 target_link_libraries(pub_tf2 ${catkin_LIBRARIES})
+
+add_executable(baseline_estimation src/baseline_estimation.cpp)
+add_dependencies(baseline_estimation first_project_generate_messages_cpp)
+target_link_libraries(baseline_estimation ${catkin_LIBRARIES})

@@ -6,6 +6,7 @@
 
     <node pkg="first_project" name="scout_velocity" type="scout_velocity" output="screen"/>
     <node pkg="first_project" name="odometry" type="odometry" output="screen"/>
+    <node pkg="first_project" name="baseline_estimation" type="baseline_estimation" output="screen"/>
 
     <node pkg="rqt_reconfigure" name="reconfigure_gui" type="rqt_reconfigure" />
 
