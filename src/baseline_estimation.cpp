@@ -38,7 +38,7 @@ void callback(const first_project::MotorSpeedConstPtr& left,
     // if (v_left/v_right < 1.2 && v_left/v_right > 0.8 && v_left * v_right > 0){
         
     // }
-    ROS_INFO("APPARENT BASELINE: %f", baseline.data);
+    //ROS_INFO("APPARENT BASELINE: %f", baseline.data);
     // ROS_INFO("theta_k+1: %f, theta_k: %f", theta_k1, theta_k);
     // ROS_INFO("time_k+1: %f, time_k: %f", time_k1, time_k);
     // ROS_INFO("delta_t: %f", time_k);

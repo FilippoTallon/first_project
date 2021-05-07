@@ -8,6 +8,7 @@
 #include <std_srvs/Empty.h>
 #include <first_project/ResetOdometryToPose.h>
 #include "first_project/CustomOdometry.h"
+#include <nav_msgs/Odometry.h>
 
 class Odometry
 {
@@ -21,9 +22,9 @@ class Odometry
       if (! n.getParam("theta0", theta_k)) 
         ROS_INFO("Error retrieving paramater theta.");
 
-      sub = n.subscribe("/scout_velocity", 1000, &Odometry::callback, this);    // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
+      sub = n.subscribe("/scout_velocity", 1, &Odometry::callback, this);    // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
 
-      odometry = n.advertise<first_project::CustomOdometry>("odometry", 1000);         // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
+      odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);         // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
       srvResetOdometry = n.advertiseService("reset_odometry", &Odometry::resetOdometry, this);
       srvResetOdometryToPose = n.advertiseService("reset_odometry_to_pose", &Odometry::resetOdometryToPose, this);
     }
@@ -56,25 +57,25 @@ class Odometry
       if (integrationMethod == 0)
       {
         euler(msg, v, omega, delta_time);
-        odo_msg.method.data = "euler";
+        //odo_msg.method.data = "euler";
       }
       else
       {
         rungeKutta(msg, v, omega, delta_time);
-        odo_msg.method.data = "rk";
+        //odo_msg.method.data = "rk";
       }
 
-      odo_msg.odom.child_frame_id = "agilex";  /*base link*/
-      odo_msg.odom.header.frame_id = "odom";
-      odo_msg.odom.header.stamp = ros::Time::now();
-      odo_msg.odom.pose.pose.position.x = x_k1;
-      odo_msg.odom.pose.pose.position.y = y_k1;
+      odo_msg.child_frame_id = "agilex";  /*base link*/
+      odo_msg.header.frame_id = "odom";
+      odo_msg.header.stamp = ros::Time::now();
+      odo_msg.pose.pose.position.x = x_k1;
+      odo_msg.pose.pose.position.y = y_k1;
 
       q.setRPY(0,0,theta_k1);
-      odo_msg.odom.pose.pose.orientation.x = q.x();
-      odo_msg.odom.pose.pose.orientation.y = q.y();
-      odo_msg.odom.pose.pose.orientation.z = q.z();
-      odo_msg.odom.pose.pose.orientation.w = q.w();
+      odo_msg.pose.pose.orientation.x = q.x();
+      odo_msg.pose.pose.orientation.y = q.y();
+      odo_msg.pose.pose.orientation.z = q.z();
+      odo_msg.pose.pose.orientation.w = q.w();
 
       odometry.publish(odo_msg);
 
@@ -110,7 +111,7 @@ class Odometry
     ros::Subscriber sub;
     ros::ServiceServer srvResetOdometry;
     ros::ServiceServer srvResetOdometryToPose;
-    first_project::CustomOdometry odo_msg; 
+    nav_msgs::Odometry odo_msg; 
     tf2::Quaternion q;
     double x_k;
     double y_k;
