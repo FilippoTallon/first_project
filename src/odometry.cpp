@@ -67,7 +67,7 @@ class Odometry
       }
 
       odo_msg.child_frame_id = "agilex";  /*base link*/
-      odo_msg.header.frame_id = "odom";
+      odo_msg.header.frame_id = "world";
       odo_msg.header.stamp = ros::Time::now();
       odo_msg.pose.pose.position.x = x_k1;
       odo_msg.pose.pose.position.y = y_k1;

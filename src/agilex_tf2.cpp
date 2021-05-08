@@ -14,7 +14,7 @@ public:
 
   void callback(const nav_msgs::Odometry::ConstPtr& msg){
     transformStamped.header.stamp = ros::Time::now();
-    transformStamped.header.frame_id = "odom";
+    transformStamped.header.frame_id = "world";
     transformStamped.child_frame_id = "agilex";
     transformStamped.transform.translation.x = msg->pose.pose.position.x;
     transformStamped.transform.translation.y = msg->pose.pose.position.y;
