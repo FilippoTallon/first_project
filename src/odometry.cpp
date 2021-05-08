@@ -10,6 +10,8 @@
 #include "first_project/CustomOdometry.h"
 #include <nav_msgs/Odometry.h>
 
+#define Z 0.330364078283
+
 class Odometry
 {
     public:
@@ -30,21 +32,6 @@ class Odometry
       srvResetOdometryToPose = n.advertiseService("reset_odometry_to_pose", &Odometry::resetOdometryToPose, this);
     }
     
-
-    void euler(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
-    {
-      theta_k1 = theta_k + omega*time;
-      x_k1 = x_k + v*time*cos(theta_k);
-      y_k1 = y_k + v*time*sin(theta_k);
-    }
-
-    void rungeKutta(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
-    {
-      theta_k1 = theta_k + omega*time;
-      x_k1 = x_k + v*time*cos(theta_k + omega*time/2);
-      y_k1 = y_k + v*time*sin(theta_k + omega*time/2);
-    }
-
     void callback(const geometry_msgs::TwistStampedConstPtr& msg)
     {
       double v = msg -> twist.linear.x;
@@ -66,11 +53,12 @@ class Odometry
         odo_custom_msg.method.data = "rk";
       }
 
-      odo_msg.child_frame_id = "agilex";  /*base link*/
+      odo_msg.child_frame_id = "scout_link";  //base link
       odo_msg.header.frame_id = "world";
       odo_msg.header.stamp = ros::Time::now();
       odo_msg.pose.pose.position.x = x_k1;
       odo_msg.pose.pose.position.y = y_k1;
+      odo_msg.pose.pose.position.z = Z;     // z fixed consistenty with gt_pose
 
       q.setRPY(0,0,theta_k1);
       odo_msg.pose.pose.orientation.x = q.x();
@@ -89,13 +77,30 @@ class Odometry
       prv_time = time;
     }
 
+    void euler(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
+    {
+      theta_k1 = theta_k + omega*time;
+      x_k1 = x_k + v*time*cos(theta_k);
+      y_k1 = y_k + v*time*sin(theta_k);
+    }
+
+    void rungeKutta(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
+    {
+      theta_k1 = theta_k + omega*time;
+      x_k1 = x_k + v*time*cos(theta_k + omega*time/2);
+      y_k1 = y_k + v*time*sin(theta_k + omega*time/2);
+    }
+
     bool resetOdometry(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
     {
-      x_k = 0.0;
-      y_k = 0.0;
-      theta_k = 0.0;
+      if (! n.getParam("x0", x_k))
+        ROS_INFO("Error retrieving paramater x.");            
+      if (! n.getParam("y0", y_k)) 
+        ROS_INFO("Error retrieving paramater y.");            
+      if (! n.getParam("theta0", theta_k)) 
+        ROS_INFO("Error retrieving paramater theta.");
 
-      ROS_INFO("reset odometry to (0.0, 0.0, 0.0)");
+      ROS_INFO("reset odometry to (%f, %f, %f)", x_k, y_k, theta_k);
       return true;
     }
 

@@ -8,23 +8,21 @@
 class tf_sub_pub
 {
 public:
-  tf_sub_pub() {
+  tf_sub_pub() 
+  {
     sub = n.subscribe("scout_odom", 1000, &tf_sub_pub::callback, this);
   }
 
-  void callback(const nav_msgs::Odometry::ConstPtr& msg){
+  void callback(const nav_msgs::Odometry::ConstPtr& msg)
+  {
     transformStamped.header.stamp = ros::Time::now();
     transformStamped.header.frame_id = "odom";
     transformStamped.child_frame_id = "base_link";
+
     transformStamped.transform.translation.x = msg->pose.pose.position.x;
     transformStamped.transform.translation.y = msg->pose.pose.position.y;
     transformStamped.transform.translation.z = msg->pose.pose.position.z;
-    /*tf2::Quaternion q;
-    q.setRPY(0, 0, msg->pose.pose.orientation.z);
-    transformStamped.transform.rotation.x = q.x();
-    transformStamped.transform.rotation.y = q.y();
-    transformStamped.transform.rotation.z = q.z();
-    transformStamped.transform.rotation.w = q.w();*/
+  
     transformStamped.transform.rotation.x = msg->pose.pose.orientation.x;
     transformStamped.transform.rotation.y = msg->pose.pose.orientation.y;
     transformStamped.transform.rotation.z = msg->pose.pose.orientation.z;
@@ -40,9 +38,13 @@ private:
 };
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
   ros::init(argc, argv, "subscribe_and_publish");
+
   tf_sub_pub my_tf_sub_bub;
+
   ros::spin();
+
   return 0;
 }
