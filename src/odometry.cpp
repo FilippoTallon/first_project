@@ -25,6 +25,7 @@ class Odometry
       sub = n.subscribe("/scout_velocity", 1, &Odometry::callback, this);    // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
 
       odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);         // controllare dimensione buffer, ha senso tenere 1000 o mettere 1?
+      customOdometry = n.advertise<first_project::CustomOdometry>("custom_odometry", 1000);
       srvResetOdometry = n.advertiseService("reset_odometry", &Odometry::resetOdometry, this);
       srvResetOdometryToPose = n.advertiseService("reset_odometry_to_pose", &Odometry::resetOdometryToPose, this);
     }
@@ -57,12 +58,12 @@ class Odometry
       if (integrationMethod == 0)
       {
         euler(msg, v, omega, delta_time);
-        //odo_msg.method.data = "euler";
+        odo_custom_msg.method.data = "euler";
       }
       else
       {
         rungeKutta(msg, v, omega, delta_time);
-        //odo_msg.method.data = "rk";
+        odo_custom_msg.method.data = "rk";
       }
 
       odo_msg.child_frame_id = "agilex";  /*base link*/
@@ -77,7 +78,10 @@ class Odometry
       odo_msg.pose.pose.orientation.z = q.z();
       odo_msg.pose.pose.orientation.w = q.w();
 
+      odo_custom_msg.odom = odo_msg;
+
       odometry.publish(odo_msg);
+      customOdometry.publish(odo_custom_msg);
 
       theta_k = theta_k1;
       x_k = x_k1;
@@ -108,10 +112,12 @@ class Odometry
     private:
     ros::NodeHandle n;
     ros::Publisher odometry;
+    ros::Publisher customOdometry;
     ros::Subscriber sub;
     ros::ServiceServer srvResetOdometry;
     ros::ServiceServer srvResetOdometryToPose;
     nav_msgs::Odometry odo_msg; 
+    first_project::CustomOdometry odo_custom_msg;
     tf2::Quaternion q;
     double x_k;
     double y_k;

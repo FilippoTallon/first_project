@@ -17,12 +17,8 @@ double theta_k;
 double time_k;
 std_msgs::Float64 baseline;
 
-void callback(const first_project::MotorSpeedConstPtr& left, 
-              const first_project::MotorSpeedConstPtr& right,
-              const geometry_msgs::PoseStampedConstPtr& pose,
-              const ros::Publisher appa_baseline) {
-
-
+void callback(const first_project::MotorSpeedConstPtr& left, const first_project::MotorSpeedConstPtr& right,const geometry_msgs::PoseStampedConstPtr& pose,const ros::Publisher appa_baseline) 
+{
     double v_left = (left->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
     double v_right = (right->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
 
@@ -49,8 +45,9 @@ void callback(const first_project::MotorSpeedConstPtr& left,
     appa_baseline.publish(baseline);
 }
 
-int main(int argc, char** argv) {
-    ros::init(argc, argv, "baseline_calculator");
+int main(int argc, char** argv) 
+{
+    ros::init(argc, argv, "baseline_estimator");
 
     ros::NodeHandle n;
     
@@ -59,18 +56,15 @@ int main(int argc, char** argv) {
     time_k = ros::Time::now().toSec();
 
     ros::Publisher appa_baseline = n.advertise<std_msgs::Float64>("apparent_baseline", 1000);
-
     
     message_filters::Subscriber<first_project::MotorSpeed> sub1(n, "motor_speed_fl", 100);
     message_filters::Subscriber<first_project::MotorSpeed> sub2(n, "motor_speed_fr", 100);
     message_filters::Subscriber<geometry_msgs::PoseStamped> sub3(n, "gt_pose", 100);
     
-    typedef message_filters::sync_policies
-      ::ApproximateTime<first_project::MotorSpeed, first_project::MotorSpeed, geometry_msgs::PoseStamped> MySyncPolicy;
+    typedef message_filters::sync_policies::ApproximateTime<first_project::MotorSpeed, first_project::MotorSpeed, geometry_msgs::PoseStamped> MySyncPolicy;
   
     message_filters::Synchronizer<MySyncPolicy> sync(MySyncPolicy(100), sub1, sub2, sub3);
     sync.registerCallback(boost::bind(&callback, _1, _2, _3, appa_baseline));
-
 
     ros::spin();
 
