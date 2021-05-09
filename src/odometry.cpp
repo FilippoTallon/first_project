@@ -44,12 +44,12 @@ class Odometry
 
       if (integrationMethod == 0)
       {
-        euler(msg, v, omega, delta_time);
+        euler(v, omega, delta_time);
         odo_custom_msg.method.data = "euler";
       }
       else
       {
-        rungeKutta(msg, v, omega, delta_time);
+        rungeKutta(v, omega, delta_time);
         odo_custom_msg.method.data = "rk";
       }
 
@@ -77,14 +77,14 @@ class Odometry
       prv_time = time;
     }
 
-    void euler(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
+    void euler(double v, double omega, double time)
     {
       theta_k1 = theta_k + omega*time;
       x_k1 = x_k + v*time*cos(theta_k);
       y_k1 = y_k + v*time*sin(theta_k);
     }
 
-    void rungeKutta(const geometry_msgs::TwistStampedConstPtr& msg, double v, double omega, double time)
+    void rungeKutta(double v, double omega, double time)
     {
       theta_k1 = theta_k + omega*time;
       x_k1 = x_k + v*time*cos(theta_k + omega*time/2);
