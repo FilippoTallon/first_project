@@ -1,8 +1,0 @@
-<launch>
-<node pkg="first_project" type = "pub_tf2" name = "pub_tf2"/>
-
-<node pkg="first_project" type = "agilex_tf2" name = "agilex_tf2"/>
-
-<node pkg="tf2_ros" type="static_transform_publisher" name="world" args="-0.8321 0.4263 0.3247 0.02216 -0.01044 -0.53356 0.84540 world odom " />
-
-</launch>

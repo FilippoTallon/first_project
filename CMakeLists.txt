@@ -78,6 +78,10 @@ add_executable(scout_velocity src/scout_velocity.cpp)
 add_dependencies(scout_velocity first_project_generate_messages_cpp)
 target_link_libraries(scout_velocity ${catkin_LIBRARIES})
 
+add_executable(parameters_estimation src/parameters_estimation.cpp)
+add_dependencies(parameters_estimation first_project_generate_messages_cpp)
+target_link_libraries(parameters_estimation ${catkin_LIBRARIES})
+
 add_executable(odometry src/odometry.cpp)
 add_dependencies(odometry first_project_generate_messages_cpp)
 add_dependencies(odometry ${PROJECT_NAME}_gencfg)

@@ -6,7 +6,6 @@
 
     <node pkg="first_project" name="scout_velocity" type="scout_velocity" output="screen"/>
     <node pkg="first_project" name="odometry" type="odometry" output="screen"/>
-    <node pkg="first_project" name="baseline_estimation" type="baseline_estimation" output="screen"/>
 
     <node pkg="first_project" type = "pub_tf2" name = "pub_tf2"/>
     <node pkg="first_project" type = "pub_scout_tf2" name = "pub_scout_tf2"/>

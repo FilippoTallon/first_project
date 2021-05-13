@@ -1,0 +1,11 @@
+<launch>
+
+    <param name="x0" value="-0.598297894001" type="double"/>
+    <param name="y0" value="0.442829757929" type="double"/>
+    <param name="theta0" value="-80.234" type="double"/>
+
+    <node pkg="first_project" name="parameters_estimation" type="parameters_estimation" output="screen"/>
+    <node pkg="first_project" name="baseline_estimation" type="baseline_estimation" output="screen"/>
+
+
+</launch>

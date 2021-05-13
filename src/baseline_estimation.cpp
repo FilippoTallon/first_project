@@ -5,44 +5,51 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
-#include <std_msgs/Float64.h>
 #include "first_project/MotorSpeed.h"
 #include <message_filters/sync_policies/approximate_time.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #define R 0.1575
-#define GEAR_RATIO 38
-#define T 0.00036
+#define GEAR_RATIO 40
+#define APPARENT_BASELINE 0.95
+#define Z 0.330364078283
 
+double x_k;
+double y_k;
 double theta_k;
-double time_k;
-std_msgs::Float64 baseline;
+double x_k1;
+double y_k1;
+double theta_k1;
+double prv_time;
+double J = 0.0;
+int i = 1;
+tf2::Quaternion q;
+geometry_msgs::PoseStamped baseline;
 
 void callback(const first_project::MotorSpeedConstPtr& left, const first_project::MotorSpeedConstPtr& right,const geometry_msgs::PoseStampedConstPtr& pose,const ros::Publisher appa_baseline) 
 {
     double v_left = (left->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
     double v_right = (right->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
+    double omega = (v_right + v_left)/APPARENT_BASELINE;
+    double v = (- v_left + v_right)/2;
+    double time = pose -> header.stamp.toSec();
+    double delta_time = time - prv_time;
 
-    double theta_k1 = pose -> pose.orientation.z;
-    double time_k1 = pose -> header.stamp.toSec();
-    
-    double delta_time = time_k1 - time_k;
+    theta_k1 = theta_k + omega*delta_time;
+    x_k1 = x_k + v*delta_time*cos(theta_k + omega*delta_time/2);
+    y_k1 = y_k + v*delta_time*sin(theta_k + omega*delta_time/2);
 
-    double omega_k = (theta_k1 - theta_k) / delta_time;
+    q.setRPY(0,0,theta_k1);
 
-    baseline.data = (v_right + v_left) / omega_k;
+    J = J + pow(x_k1-(pose->pose.position.x),2)+pow(y_k1-(pose->pose.position.y),2)+pow(q.z()-(pose->pose.orientation.z),2);
+    i++;
+    if (i<500)  
+        ROS_INFO("J: %f", J);
 
-    // if (v_left/v_right < 1.2 && v_left/v_right > 0.8 && v_left * v_right > 0){
-        
-    // }
-    //ROS_INFO("APPARENT BASELINE: %f", baseline.data);
-    // ROS_INFO("theta_k+1: %f, theta_k: %f", theta_k1, theta_k);
-    // ROS_INFO("time_k+1: %f, time_k: %f", time_k1, time_k);
-    // ROS_INFO("delta_t: %f", time_k);
-    // ROS_INFO("omega: %f", omega_k);
-    
     theta_k = theta_k1;
-    time_k = time_k1;
-    appa_baseline.publish(baseline);
+    x_k = x_k1;
+    y_k = y_k1;
+    prv_time = time;    
 }
 
 int main(int argc, char** argv) 
@@ -51,11 +58,15 @@ int main(int argc, char** argv)
 
     ros::NodeHandle n;
     
+    if (! n.getParam("x0", x_k))
+        ROS_INFO("Error retrieving paramater x.");            
+    if (! n.getParam("y0", y_k)) 
+        ROS_INFO("Error retrieving paramater y.");            
     if (! n.getParam("theta0", theta_k)) 
         ROS_INFO("Error retrieving paramater theta.");
-    time_k = ros::Time::now().toSec();
+    prv_time = ros::Time::now().toSec();
 
-    ros::Publisher appa_baseline = n.advertise<std_msgs::Float64>("apparent_baseline", 1000);
+    ros::Publisher appa_baseline = n.advertise<geometry_msgs::PoseStamped>("apparent_baseline", 1000);
     
     message_filters::Subscriber<first_project::MotorSpeed> sub1(n, "motor_speed_fl", 100);
     message_filters::Subscriber<first_project::MotorSpeed> sub2(n, "motor_speed_fr", 100);

@@ -11,14 +11,14 @@
 
 void callback(const first_project::MotorSpeedConstPtr& left, const first_project::MotorSpeedConstPtr& right, const ros::Publisher scout_velocity) 
 {
-    float v_left = (left->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
-    float v_right = (right->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
-    float omega = (v_right + v_left)/APPARENT_BASELINE;
-    float v = (- v_left + v_right)/2;                   // controllare nome teoria
+    double v_left = (left->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
+    double v_right = (right->rpm) * 2 * M_PI * R / (60 * GEAR_RATIO);
+    double omega = (v_right + v_left)/APPARENT_BASELINE;
+    double v = (- v_left + v_right)/2;                   
 
     geometry_msgs::TwistStamped msg;
     msg.header.stamp = ros::Time::now();
-    msg.header.frame_id = "scout_frame";                   // controllare nome
+    msg.header.frame_id = "scout_frame";                   
 
     msg.twist.linear.x = v;
     msg.twist.linear.y = 0.0;
